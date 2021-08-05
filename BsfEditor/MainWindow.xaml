@@ -1,0 +1,69 @@
+﻿<Window x:Class="BsfEditor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BsfEditor"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525"
+        d:DataContext="{d:DesignInstance local:MainViewModel}"
+        Name="This">
+    <Window.Resources>
+        <ResourceDictionary>
+            <CollectionViewSource x:Key="EntriesWithSearch"
+                                  Source="{Binding Entries}"
+                                  Filter="EntriesWithSearch_OnFilter" />
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <TextBox Grid.Row="0" Grid.Column="0"
+                 Text="{Binding SelectedFilePath}"
+                 local:WatermarkService.Watermark=" Path to file" />
+        <Button Grid.Row="0" Grid.Column="1"
+                Command="{Binding SelectFileCommand}"
+                Content="..." />
+        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBox local:WatermarkService.Watermark=" Search..."
+                     Text="{Binding SearchText,ElementName=This,Delay=500,UpdateSourceTrigger=PropertyChanged}" />
+            <Button Grid.Column="1"
+                    Command="{Binding OpenFileCommand}"
+                    Content="Open file" />
+            <Button Grid.Column="2"
+                    Command="{Binding SaveFileCommand}"
+                    Content="Save file" />
+        </Grid>
+        <DataGrid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                  Visibility="Visible"
+                  ItemsSource="{Binding Source={StaticResource EntriesWithSearch}}"
+                  CanUserAddRows="True"
+                  CanUserDeleteRows="True"
+                  AutoGenerateColumns="False"
+                  CanUserSortColumns="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Key"
+                                    Width="*"
+                                    Binding="{Binding Key}"
+                                    d:DataContext="{d:DesignInstance local:Entry}"
+                                    IsReadOnly="False" />
+                <DataGridTextColumn Header="Value" Width="2*"
+                                    Binding="{Binding Value}"
+                                    d:DataContext="{d:DesignInstance local:Entry}"
+                                    IsReadOnly="False" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>
