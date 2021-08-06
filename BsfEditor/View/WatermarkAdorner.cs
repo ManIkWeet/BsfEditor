@@ -4,7 +4,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Media;
 
-namespace BsfEditor
+namespace BsfEditor.View
 {
     /// <summary>
     ///     Adorner for the watermark

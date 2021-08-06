@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace BsfEditor
+namespace BsfEditor.Model
 {
     public class Entry : INotifyPropertyChanged
     {

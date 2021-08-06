@@ -6,7 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 
-namespace BsfEditor
+namespace BsfEditor.View
 {
     /// <summary>
     ///     Class that provides the Watermark attached property

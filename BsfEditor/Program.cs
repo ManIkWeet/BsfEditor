@@ -1,5 +1,7 @@
 using System;
 using System.Windows;
+using BsfEditor.View;
+using BsfEditor.ViewModel;
 using ToxicRagers.Helpers;
 
 namespace BsfEditor

@@ -1,7 +1,7 @@
 using System;
 using System.Windows.Input;
 
-namespace BsfEditor
+namespace BsfEditor.ViewModel
 {
     public class RelayCommand : RelayCommand<object>
     {

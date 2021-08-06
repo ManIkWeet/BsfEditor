@@ -4,11 +4,12 @@ using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using BsfEditor.Model;
 using Microsoft.Win32;
 using ToxicRagers.Helpers;
 using ToxicRagers.Stainless.Formats;
 
-namespace BsfEditor
+namespace BsfEditor.ViewModel
 {
     public class MainViewModel : INotifyPropertyChanged
     {

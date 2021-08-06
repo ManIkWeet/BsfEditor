@@ -3,7 +3,7 @@ using System.Text;
 using ToxicRagers.Helpers;
 using ToxicRagers.Stainless.Formats;
 
-namespace BsfEditor
+namespace BsfEditor.Model
 {
     public static class BsfExtensions
     {

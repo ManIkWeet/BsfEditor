@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows.Data;
+using BsfEditor.Model;
 
-namespace BsfEditor
+namespace BsfEditor.View
 {
     /// <summary>
     ///     Interaction logic for MainWindow.xaml
