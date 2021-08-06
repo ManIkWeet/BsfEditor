@@ -36,13 +36,17 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <TextBox local:WatermarkService.Watermark=" Search..."
                      Text="{Binding SearchText,ElementName=This,Delay=500,UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Column="1"
+            <CheckBox Grid.Column="1"
+                      IsChecked="{Binding LoggingEnabled}" 
+                      Content="Enable logging"/>
+            <Button Grid.Column="2"
                     Command="{Binding OpenFileCommand}"
                     Content="Open file" />
-            <Button Grid.Column="2"
+            <Button Grid.Column="3"
                     Command="{Binding SaveFileCommand}"
                     Content="Save file" />
         </Grid>
