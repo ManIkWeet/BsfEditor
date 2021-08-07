@@ -15,6 +15,7 @@ namespace BsfEditor.ViewModel
     {
         #region Fields
         private string _selectedFilePath;
+        private int _selectedIndex;
         #endregion
 
         #region Properties and Indexers
@@ -30,6 +31,7 @@ namespace BsfEditor.ViewModel
             }
         }
 
+        public RelayCommand<int> MoveSelectionCommand { get; }
         public RelayCommand OpenFileCommand { get; }
         public RelayCommand SaveFileCommand { get; }
 
@@ -39,6 +41,16 @@ namespace BsfEditor.ViewModel
             set
             {
                 _selectedFilePath = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int SelectedIndex
+        {
+            get => _selectedIndex;
+            set
+            {
+                _selectedIndex = value;
                 OnPropertyChanged();
             }
         }
@@ -56,10 +68,23 @@ namespace BsfEditor.ViewModel
             SelectFileCommand = new RelayCommand(SelectFile);
             OpenFileCommand = new RelayCommand(OpenFile, () => !string.IsNullOrWhiteSpace(_selectedFilePath));
             SaveFileCommand = new RelayCommand(SaveFile, () => !string.IsNullOrWhiteSpace(_selectedFilePath) && Entries.Count > 0);
+            MoveSelectionCommand = new RelayCommand<int>(MoveSelection, arg => SelectedIndex > -1 &&
+                                                                               SelectedIndex < Entries.Count &&
+                                                                               SelectedIndex + arg >= 0 &&
+                                                                               SelectedIndex + arg < Entries.Count);
         }
         #endregion
 
         #region Private members
+        private void MoveSelection(int arg)
+        {
+            var selectedItem = Entries[SelectedIndex];
+            var newIndex = SelectedIndex + arg;
+            Entries.RemoveAt(SelectedIndex);
+            Entries.Insert(newIndex, selectedItem);
+            SelectedIndex = newIndex;
+        }
+
         private void OpenFile()
         {
             try

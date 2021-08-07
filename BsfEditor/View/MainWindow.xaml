@@ -7,6 +7,7 @@
         xmlns:view="clr-namespace:BsfEditor.View"
         xmlns:viewModel="clr-namespace:BsfEditor.ViewModel"
         xmlns:model="clr-namespace:BsfEditor.Model"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525"
         d:DataContext="{d:DesignInstance viewModel:MainViewModel}"
@@ -23,6 +24,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
@@ -56,10 +58,12 @@
         <DataGrid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
                   Visibility="Visible"
                   ItemsSource="{Binding Source={StaticResource EntriesWithSearch}}"
+                  SelectedIndex="{Binding SelectedIndex,Mode=TwoWay}"
                   CanUserAddRows="True"
                   CanUserDeleteRows="True"
                   AutoGenerateColumns="False"
-                  CanUserSortColumns="True">
+                  CanUserSortColumns="False"
+                  SelectionMode="Single">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Key"
                                     Width="*"
@@ -72,5 +76,32 @@
                                     IsReadOnly="False" />
             </DataGrid.Columns>
         </DataGrid>
+        <UniformGrid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
+                     Rows="2">
+            <Button Command="{Binding MoveSelectionCommand}"
+                    Content="Move selection up">
+                <Button.CommandParameter>
+                    <system:Int32>-1</system:Int32>
+                </Button.CommandParameter>
+            </Button>
+            <Button Command="{Binding MoveSelectionCommand}"
+                    Content="Move selection up 5">
+                <Button.CommandParameter>
+                    <system:Int32>-5</system:Int32>
+                </Button.CommandParameter>
+            </Button>
+            <Button Command="{Binding MoveSelectionCommand}"
+                    Content="Move selection down">
+                <Button.CommandParameter>
+                    <system:Int32>1</system:Int32>
+                </Button.CommandParameter>
+            </Button>
+            <Button Command="{Binding MoveSelectionCommand}"
+                    Content="Move selection down 5">
+                <Button.CommandParameter>
+                    <system:Int32>5</system:Int32>
+                </Button.CommandParameter>
+            </Button>
+        </UniformGrid>
     </Grid>
 </Window>
