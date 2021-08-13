@@ -9,7 +9,7 @@
         xmlns:model="clr-namespace:BsfEditor.Model"
         xmlns:system="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525"
+        Title="Bsf Editor" Height="350" Width="525"
         d:DataContext="{d:DesignInstance viewModel:MainViewModel}"
         Name="This">
     <Window.Resources>
@@ -63,7 +63,8 @@
                   CanUserDeleteRows="True"
                   AutoGenerateColumns="False"
                   CanUserSortColumns="False"
-                  SelectionMode="Single">
+                  SelectionMode="Single"
+                  view:DataGridBehavior.DisplayRowNumber="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Key"
                                     Width="*"
