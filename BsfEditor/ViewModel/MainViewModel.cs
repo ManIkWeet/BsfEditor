@@ -54,8 +54,6 @@ namespace BsfEditor.ViewModel
                 OnPropertyChanged();
             }
         }
-
-        public RelayCommand SelectFileCommand { get; }
         #endregion
 
         #region Events
@@ -65,9 +63,8 @@ namespace BsfEditor.ViewModel
         #region Constructors
         public MainViewModel()
         {
-            SelectFileCommand = new RelayCommand(SelectFile);
-            OpenFileCommand = new RelayCommand(OpenFile, () => !string.IsNullOrWhiteSpace(_selectedFilePath));
-            SaveFileCommand = new RelayCommand(SaveFile, () => !string.IsNullOrWhiteSpace(_selectedFilePath) && Entries.Count > 0);
+            OpenFileCommand = new RelayCommand(OpenFile);
+            SaveFileCommand = new RelayCommand(SaveFile, () => Entries.Count > 0);
             MoveSelectionCommand = new RelayCommand<int>(MoveSelection, arg => SelectedIndex > -1 &&
                                                                                SelectedIndex < Entries.Count &&
                                                                                SelectedIndex + arg >= 0 &&
@@ -89,10 +86,11 @@ namespace BsfEditor.ViewModel
         {
             try
             {
-                var fileInfo = new FileInfo(SelectedFilePath);
+                if (!ShowFileDialog(false, out var path)) return;
+                var fileInfo = new FileInfo(path);
                 if (!fileInfo.Exists)
                 {
-                    MessageBox.Show("Your selected file doesn't exist");
+                    MessageBox.Show("Your selected file doesn't exist (how?)");
                     return;
                 }
 
@@ -108,6 +106,7 @@ namespace BsfEditor.ViewModel
                     Entries.Add(new Entry(kvp.Key, kvp.Value));
                 }
                 Logger.LogToFile(Logger.LogLevel.Info, $"There are {Entries.Count} entries");
+                SelectedFilePath = path;
             }
             catch (Exception exception)
             {
@@ -119,6 +118,7 @@ namespace BsfEditor.ViewModel
         {
             try
             {
+                if (!ShowFileDialog(true, out var savePath, SelectedFilePath)) return;
                 var bsf = new BSF();
                 foreach (var entry in Entries)
                 {
@@ -134,7 +134,7 @@ namespace BsfEditor.ViewModel
                     }
                     bsf.Add(entry.Key, entry.Value);
                 }
-                bsf.Save(SelectedFilePath);
+                bsf.Save(savePath);
             }
             catch (Exception exception)
             {
@@ -142,21 +142,29 @@ namespace BsfEditor.ViewModel
             }
         }
 
-        private void SelectFile()
+        private static bool ShowFileDialog(bool isSaveDialog, out string path, string initialPath = null)
         {
-            var openFileDialog = new OpenFileDialog
+            FileDialog fileDialog;
+            const string stringFormat = "Binary String Format|*.bsf";
+            if (isSaveDialog)
             {
-                Filter = "",
-                CheckFileExists = true,
-                CheckPathExists = true,
-                Multiselect = false,
-                Title = "Select file"
-            };
-            var result = openFileDialog.ShowDialog();
-            if (result == true)
-            {
-                SelectedFilePath = openFileDialog.FileName;
+                fileDialog = new SaveFileDialog();
             }
+            else
+            {
+                fileDialog = new OpenFileDialog
+                {
+                    CheckFileExists = true,
+                };
+            }
+            fileDialog.Title = "Select file";
+            fileDialog.Filter = stringFormat;
+            fileDialog.CheckPathExists = true;
+            fileDialog.InitialDirectory = initialPath ?? string.Empty;
+
+            var dialogResult = fileDialog.ShowDialog();
+            path = fileDialog.FileName;
+            return dialogResult == true;
         }
         #endregion
 

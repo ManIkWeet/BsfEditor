@@ -26,17 +26,8 @@
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
-        <TextBox Grid.Row="0" Grid.Column="0"
-                 Text="{Binding SelectedFilePath}"
-                 view:WatermarkService.Watermark=" Path to file" />
-        <Button Grid.Row="0" Grid.Column="1"
-                Command="{Binding SelectFileCommand}"
-                Content="..." />
-        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+        <TextBlock Grid.Row="0" Text="{Binding SelectedFilePath}" />
+        <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -55,7 +46,7 @@
                     Command="{Binding SaveFileCommand}"
                     Content="Save file" />
         </Grid>
-        <DataGrid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+        <DataGrid Grid.Row="2"
                   Visibility="Visible"
                   ItemsSource="{Binding Source={StaticResource EntriesWithSearch}}"
                   SelectedIndex="{Binding SelectedIndex,Mode=TwoWay}"
@@ -74,10 +65,16 @@
                 <DataGridTextColumn Header="Value" Width="2*"
                                     Binding="{Binding Value}"
                                     d:DataContext="{d:DesignInstance model:Entry}"
-                                    IsReadOnly="False" />
+                                    IsReadOnly="False">
+                    <DataGridTextColumn.EditingElementStyle>
+                        <Style TargetType="TextBox">
+                            <Setter Property="AcceptsReturn" Value="True" />
+                        </Style>
+                    </DataGridTextColumn.EditingElementStyle>
+                </DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <UniformGrid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
+        <UniformGrid Grid.Row="3"
                      Rows="2">
             <Button Command="{Binding MoveSelectionCommand}"
                     Content="Move selection up">
