@@ -2,10 +2,12 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using BsfEditor.Model;
 using Microsoft.Win32;
+using Newtonsoft.Json;
 using ToxicRagers.Helpers;
 using ToxicRagers.Stainless.Formats;
 
@@ -73,6 +75,36 @@ namespace BsfEditor.ViewModel
         #endregion
 
         #region Private members
+        private BSF CreateBsf()
+        {
+            var bsf = new BSF();
+            foreach (var entry in Entries)
+            {
+                if (entry.Key.Length > byte.MaxValue)
+                {
+                    Logger.LogToFile(Logger.LogLevel.Info, $"Skipping entry {entry.Key}, key length too long >{byte.MaxValue}");
+                    continue;
+                }
+                if (entry.Value.Length > short.MaxValue)
+                {
+                    Logger.LogToFile(Logger.LogLevel.Info, $"Skipping entry {entry.Key}, value length too long >{short.MaxValue}");
+                    continue;
+                }
+                bsf.Add(entry.Key, entry.Value);
+            }
+            return bsf;
+        }
+
+        private static bool EqualsBsf(string extension)
+        {
+            return extension.Equals(".bsf", StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        private static bool EqualsJson(string extension)
+        {
+            return extension.Equals(".json", StringComparison.InvariantCultureIgnoreCase);
+        }
+
         private void MoveSelection(int arg)
         {
             var selectedItem = Entries[SelectedIndex];
@@ -94,12 +126,7 @@ namespace BsfEditor.ViewModel
                     return;
                 }
 
-                var result = BSF.Load(fileInfo.FullName);
-                if (result == null)
-                {
-                    MessageBox.Show("Failed to read file, probably not BSF");
-                    return;
-                }
+                if (!ReadIntoBsf(fileInfo, out var result)) return;
                 Entries.Clear();
                 foreach (var kvp in result)
                 {
@@ -114,27 +141,40 @@ namespace BsfEditor.ViewModel
             }
         }
 
+        private static bool ReadIntoBsf(FileInfo fileInfo, out BSF result)
+        {
+            result = null;
+            if (EqualsBsf(fileInfo.Extension))
+            {
+                result = BSF.Load(fileInfo.FullName);
+                if (result != null) return true;
+                MessageBox.Show("Failed to read file, probably not BSF");
+            }
+            else if (EqualsJson(fileInfo.Extension))
+            {
+                using (var streamReader = File.OpenText(fileInfo.FullName))
+                {
+                    var serializer = new JsonSerializer();
+                    result = serializer.Deserialize(streamReader, typeof(BSF)) as BSF;
+                    return result != null;
+                }
+            }
+            return false;
+        }
+
         private void SaveFile()
         {
             try
             {
-                if (!ShowFileDialog(true, out var savePath, SelectedFilePath)) return;
-                var bsf = new BSF();
-                foreach (var entry in Entries)
+                var duplicateKeys = Entries.GroupBy(e => e.Key).Where(g => g.Skip(1).Any()).Select(g => g.Key).ToList();
+                if (duplicateKeys.Any())
                 {
-                    if (entry.Key.Length > byte.MaxValue)
-                    {
-                        Logger.LogToFile(Logger.LogLevel.Info, $"Skipping entry {entry.Key}, key length too long >{byte.MaxValue}");
-                        continue;
-                    }
-                    if (entry.Value.Length > short.MaxValue)
-                    {
-                        Logger.LogToFile(Logger.LogLevel.Info, $"Skipping entry {entry.Key}, value length too long >{short.MaxValue}");
-                        continue;
-                    }
-                    bsf.Add(entry.Key, entry.Value);
+                    MessageBox.Show($"You have duplicate key values:\n{string.Join("\n", duplicateKeys)}");
+                    return;
                 }
-                bsf.Save(savePath);
+                if (!ShowFileDialog(true, out var savePath, SelectedFilePath)) return;
+                var bsf = CreateBsf();
+                SaveToFile(savePath, bsf);
             }
             catch (Exception exception)
             {
@@ -142,10 +182,33 @@ namespace BsfEditor.ViewModel
             }
         }
 
+        private static void SaveToFile(string savePath, BSF bsf)
+        {
+            var extension = Path.GetExtension(savePath);
+            if (EqualsBsf(extension))
+            {
+                bsf.Save(savePath);
+            }
+            else if (EqualsJson(extension))
+            {
+                using (var streamWriter = new StreamWriter(savePath))
+                {
+                    var serializer = new JsonSerializer { Formatting = Formatting.Indented };
+                    serializer.Serialize(streamWriter, bsf);
+                }
+            }
+            else
+            {
+                MessageBox.Show($"Unknown extension, can't save: {extension}");
+            }
+        }
+
         private static bool ShowFileDialog(bool isSaveDialog, out string path, string initialPath = null)
         {
             FileDialog fileDialog;
-            const string stringFormat = "Binary String Format|*.bsf";
+            const string stringFormat = "All supported formats|*.bsf;*.json" +
+                                        "|Binary String Format|*.bsf" +
+                                        "|Java Script Object Notation|*.json";
             if (isSaveDialog)
             {
                 fileDialog = new SaveFileDialog();
