@@ -44,7 +44,8 @@ namespace BsfEditor.View
             }
             if (e.Item is Entry entry)
             {
-                e.Accepted = entry.Key.IndexOf(SearchText, StringComparison.InvariantCultureIgnoreCase) >= 0;
+                e.Accepted = entry.Key.IndexOf(SearchText, StringComparison.InvariantCultureIgnoreCase) >= 0 ||
+                             entry.Value.IndexOf(SearchText, StringComparison.InvariantCultureIgnoreCase) >= 0;
             }
         }
         #endregion
