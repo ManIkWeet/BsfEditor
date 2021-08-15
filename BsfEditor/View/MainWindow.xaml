@@ -58,7 +58,7 @@
                   CanUserDeleteRows="True"
                   AutoGenerateColumns="False"
                   CanUserSortColumns="False"
-                  SelectionMode="Single"
+                  SelectionMode="Extended"
                   view:DataGridBehavior.DisplayRowNumber="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Key"
