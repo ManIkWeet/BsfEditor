@@ -22,6 +22,7 @@ namespace BsfEditor.ViewModel
 
         #region Properties and Indexers
         public ObservableCollection<Entry> Entries { get; } = new ObservableCollection<Entry>();
+        public RelayCommand ImportFileCommand { get; }
 
         public bool LoggingEnabled
         {
@@ -40,7 +41,7 @@ namespace BsfEditor.ViewModel
         public string SelectedFilePath
         {
             get => _selectedFilePath;
-            set
+            private set
             {
                 _selectedFilePath = value;
                 OnPropertyChanged();
@@ -67,6 +68,7 @@ namespace BsfEditor.ViewModel
         {
             OpenFileCommand = new RelayCommand(OpenFile);
             SaveFileCommand = new RelayCommand(SaveFile, () => Entries.Count > 0);
+            ImportFileCommand = new RelayCommand(ImportFile);
             MoveSelectionCommand = new RelayCommand<int>(MoveSelection, arg => SelectedIndex > -1 &&
                                                                                SelectedIndex < Entries.Count &&
                                                                                SelectedIndex + arg >= 0 &&
@@ -103,6 +105,22 @@ namespace BsfEditor.ViewModel
         private static bool EqualsJson(string extension)
         {
             return extension.Equals(".json", StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        private void ImportFile()
+        {
+            if (!ShowFileDialog(false, out var path)) return;
+            var fileInfo = new FileInfo(path);
+            if (!fileInfo.Exists)
+            {
+                MessageBox.Show("Your selected file doesn't exist (how?)");
+                return;
+            }
+            if (!ReadIntoBsf(fileInfo, out var result)) return;
+            foreach (var kvp in result)
+            {
+                Entries.Add(new Entry(kvp.Key, kvp.Value));
+            }
         }
 
         private void MoveSelection(int arg)

@@ -33,6 +33,7 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <TextBox view:WatermarkService.Watermark=" Search..."
                      Text="{Binding SearchText,ElementName=This,Delay=500,UpdateSourceTrigger=PropertyChanged}" />
@@ -43,6 +44,9 @@
                     Command="{Binding OpenFileCommand}"
                     Content="Open file" />
             <Button Grid.Column="3"
+                    Command="{Binding ImportFileCommand}"
+                    Content="Import file" />
+            <Button Grid.Column="4"
                     Command="{Binding SaveFileCommand}"
                     Content="Save file" />
         </Grid>
