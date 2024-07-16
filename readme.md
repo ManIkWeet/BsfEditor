@@ -1,6 +1,6 @@
 **Bsf Editor**
 
-A simple tool to create, read, update and delete Carmageddon: Max Damage's .BSF (BinaryStringFormat) files.3
+A simple tool to create, read, update and delete Carmageddon: Max Damage's .BSF (BinaryStringFormat) files.
 
 **Where exe?**
 1. Go to the "Actions" tab
