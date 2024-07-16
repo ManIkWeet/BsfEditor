@@ -1,6 +1,6 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BsfEditor", "BsfEditor\BsfEditor.csproj", "{2E05E2F4-231A-4E58-9DF7-E716B71338E6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BsfEditor", "BsfEditor\BsfEditor.csproj", "{2E05E2F4-231A-4E58-9DF7-E716B71338E6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
