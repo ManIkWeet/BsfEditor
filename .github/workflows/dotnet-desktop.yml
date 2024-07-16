@@ -79,19 +79,19 @@ jobs:
     - name: Execute unit tests
       run: dotnet test
 
-    - name: Zip build result
-      uses: Azure/powershell@v2
-      with:
-        # Specify the Az PowerShell script here.
-        inlineScript: 'Compress-Archive -Path ".\BsfEditor\bin\Debug\*\*" -DestinationPath "bsfeditor.zip"'
-        # Azure PS version to be used to execute the script, example: 1.8.0, 2.8.0, 3.4.0. To use the latest version, specify "latest".
-        azPSVersion: latest
-        # If this is true, this task will fail if any errors are written to the error pipeline, or if any data is written to the Standard Error stream.
-        failOnStandardError: true # optional, default is false
+    #- name: Zip build result
+    #  uses: Azure/powershell@v2
+    #  with:
+    #    # Specify the Az PowerShell script here.
+    #    inlineScript: 'Compress-Archive -Path ".\BsfEditor\bin\*\*\*" -DestinationPath "bsfeditor.zip"'
+    #    # Azure PS version to be used to execute the script, example: 1.8.0, 2.8.0, 3.4.0. To use the latest version, specify "latest".
+    #    azPSVersion: latest
+    #    # If this is true, this task will fail if any errors are written to the error pipeline, or if any data is written to the Standard Error stream.
+    #    failOnStandardError: true # optional, default is false
 
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
-        name: MSIX Package
-        path: bsfeditor.zip
+        name: Files
+        path: BsfEditor/bin/*/*/
