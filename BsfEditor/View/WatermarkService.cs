@@ -27,7 +27,7 @@ namespace BsfEditor.View
         /// <summary>
         ///     Dictionary of ItemsControls
         /// </summary>
-        private static readonly Dictionary<object, ItemsControl> itemsControls = new Dictionary<object, ItemsControl>();
+        private static readonly Dictionary<object, ItemsControl> ItemsControls = new();
         #endregion
 
         #region Private members
@@ -57,7 +57,7 @@ namespace BsfEditor.View
             {
                 // for Items property  
                 itemsControl.ItemContainerGenerator.ItemsChanged += ItemsChanged;
-                itemsControls.Add(itemsControl.ItemContainerGenerator, itemsControl);
+                ItemsControls.Add(itemsControl.ItemContainerGenerator, itemsControl);
 
                 // for ItemsSource property  
                 var prop = DependencyPropertyDescriptor.FromProperty(ItemsControl.ItemsSourceProperty, itemsControl.GetType());
@@ -153,8 +153,7 @@ namespace BsfEditor.View
         /// <param name="e">A <see cref="ItemsChangedEventArgs" /> that contains the event data.</param>
         private static void ItemsChanged(object sender, ItemsChangedEventArgs e)
         {
-            ItemsControl control;
-            if (itemsControls.TryGetValue(sender, out control))
+            if (ItemsControls.TryGetValue(sender, out var control))
             {
                 if (ShouldShowWatermark(control))
                 {

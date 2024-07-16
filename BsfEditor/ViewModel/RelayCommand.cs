@@ -5,11 +5,6 @@ namespace BsfEditor.ViewModel
 {
     public class RelayCommand : RelayCommand<object>
     {
-        #region Constructors
-        public RelayCommand(Action<object> execute) : base(execute)
-        {
-        }
-
         public RelayCommand(Action execute) : base(o => execute())
         {
         }
@@ -17,37 +12,26 @@ namespace BsfEditor.ViewModel
         public RelayCommand(Action execute, Func<bool> canExecute) : base(o => execute(), o => canExecute())
         {
         }
-        #endregion
     }
 
-    public class RelayCommand<T> : ICommand
+    public class RelayCommand<T>(Action<T> execute) : ICommand
     {
         #region Fields
         private readonly Func<T, bool> _canExecute;
-        private readonly Action<T> _execute;
+        private readonly Action<T> _execute = execute ?? throw new ArgumentNullException(nameof(execute));
         #endregion
 
-        #region Events
         public event EventHandler CanExecuteChanged
         {
             add => CommandManager.RequerySuggested += value;
             remove => CommandManager.RequerySuggested -= value;
-        }
-        #endregion
-
-        #region Constructors
-        public RelayCommand(Action<T> execute)
-        {
-            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
         }
 
         public RelayCommand(Action<T> execute, Func<T, bool> canExecute) : this(execute)
         {
             _canExecute = canExecute;
         }
-        #endregion
 
-        #region Interface Implementations
         public bool CanExecute(object parameter)
         {
             if (_canExecute == null) return true;
@@ -63,6 +47,5 @@ namespace BsfEditor.ViewModel
         {
             _execute((T)parameter);
         }
-        #endregion
     }
 }

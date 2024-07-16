@@ -13,7 +13,7 @@ using ToxicRagers.Stainless.Formats;
 
 namespace BsfEditor.ViewModel
 {
-    public class MainViewModel : INotifyPropertyChanged
+    public sealed class MainViewModel : INotifyPropertyChanged
     {
         #region Fields
         private string _selectedFilePath;
@@ -21,7 +21,7 @@ namespace BsfEditor.ViewModel
         #endregion
 
         #region Properties and Indexers
-        public ObservableCollection<Entry> Entries { get; } = new ObservableCollection<Entry>();
+        public ObservableCollection<Entry> Entries { get; } = [];
         public RelayCommand ImportFileCommand { get; }
 
         public bool LoggingEnabled
@@ -170,12 +170,10 @@ namespace BsfEditor.ViewModel
             }
             else if (EqualsJson(fileInfo.Extension))
             {
-                using (var streamReader = File.OpenText(fileInfo.FullName))
-                {
-                    var serializer = new JsonSerializer();
-                    result = serializer.Deserialize(streamReader, typeof(BSF)) as BSF;
-                    return result != null;
-                }
+                using var streamReader = File.OpenText(fileInfo.FullName);
+                var serializer = new JsonSerializer();
+                result = serializer.Deserialize(streamReader, typeof(BSF)) as BSF;
+                return result != null;
             }
             return false;
         }
@@ -185,7 +183,7 @@ namespace BsfEditor.ViewModel
             try
             {
                 var duplicateKeys = Entries.GroupBy(e => e.Key).Where(g => g.Skip(1).Any()).Select(g => g.Key).ToList();
-                if (duplicateKeys.Any())
+                if (duplicateKeys.Count != 0)
                 {
                     MessageBox.Show($"You have duplicate key values:\n{string.Join("\n", duplicateKeys)}");
                     return;
@@ -209,11 +207,9 @@ namespace BsfEditor.ViewModel
             }
             else if (EqualsJson(extension))
             {
-                using (var streamWriter = new StreamWriter(savePath))
-                {
-                    var serializer = new JsonSerializer { Formatting = Formatting.Indented };
-                    serializer.Serialize(streamWriter, bsf);
-                }
+                using var streamWriter = new StreamWriter(savePath);
+                var serializer = new JsonSerializer { Formatting = Formatting.Indented };
+                serializer.Serialize(streamWriter, bsf);
             }
             else
             {
@@ -250,7 +246,7 @@ namespace BsfEditor.ViewModel
         #endregion
 
         #region Protected members
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

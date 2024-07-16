@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace BsfEditor.Model
 {
-    public class Entry : INotifyPropertyChanged
+    public sealed class Entry : INotifyPropertyChanged
     {
         #region Fields
         private string _key;
@@ -50,7 +50,7 @@ namespace BsfEditor.Model
         #endregion
 
         #region Protected members
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
